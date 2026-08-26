@@ -46,7 +46,7 @@ export default function Models() {
           <input
             className="field"
             type="search"
-            placeholder="Search name or lab"
+            placeholder="Search name, lab, or tag"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             aria-label="Search models"

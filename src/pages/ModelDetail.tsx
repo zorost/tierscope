@@ -120,7 +120,7 @@ export default function ModelDetail() {
                 key={t}
                 type="button"
                 className={m.myTier === t ? "btn is-selected" : "btn"}
-                style={{ background: TIER_COLORS[t], color: "#070708", borderColor: TIER_COLORS[t] }}
+                style={{ background: TIER_COLORS[t], color: "#fff", borderColor: TIER_COLORS[t] }}
                 onClick={() => vote.mutate(t)}
               >
                 {t}

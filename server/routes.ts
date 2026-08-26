@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { desc, eq, inArray } from "drizzle-orm";
 import { normalizeMetric } from "../contracts/prior.ts";
+import { matchesCatalogQuery } from "../contracts/registry.ts";
 import { TIER_POINTS, TIERS, type Tier } from "../contracts/tiers.ts";
 import { db, models, nowIso, voteEvents, votes } from "./db.ts";
 import {
@@ -36,7 +37,7 @@ api.get("/status", (c) => {
 
 api.get("/models", (c) => {
   const kind = c.req.query("kind") ?? "all";
-  const search = (c.req.query("search") ?? "").toLowerCase();
+  const search = c.req.query("search") ?? "";
   const anonId = c.req.query("anonId");
   const catalog = getCatalog();
   const byModel = groupVotesByModel(catalog.votes);
@@ -53,9 +54,7 @@ api.get("/models", (c) => {
     items = items.filter((m) => m.kind === kind);
   }
   if (search) {
-    items = items.filter(
-      (m) => m.name.toLowerCase().includes(search) || m.lab.toLowerCase().includes(search),
-    );
+    items = items.filter((m) => matchesCatalogQuery(m, search));
   }
   items.sort((a, b) => b.agg.score - a.agg.score);
   return c.json(items);

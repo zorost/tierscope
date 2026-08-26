@@ -1,4 +1,4 @@
-import { MODEL_REGISTRY, REGISTRY_AS_OF, type RegistryEntry } from "@contracts/registry";
+import { matchesCatalogQuery, MODEL_REGISTRY, REGISTRY_AS_OF, type RegistryEntry } from "@contracts/registry";
 import { computePrior, normalizeMetric } from "@contracts/prior";
 import { aggregateVotes, nearestTier, pearson } from "@contracts/score";
 import { TIER_POINTS, TIERS, type Tier } from "@contracts/tiers";
@@ -99,10 +99,9 @@ function card(entry: RegistryEntry, id: number, myTier: Tier | null): ModelCard 
 }
 
 function catalog(kind = "all", search = ""): ModelCard[] {
-  const q = search.toLowerCase();
   return MODEL_REGISTRY.map((entry, i) => card(entry, i + 1, null))
     .filter((m) => (kind === "frontier" || kind === "open" ? m.kind === kind : true))
-    .filter((m) => (q ? m.name.toLowerCase().includes(q) || m.lab.toLowerCase().includes(q) : true))
+    .filter((m) => matchesCatalogQuery(m, search))
     .sort((a, b) => b.agg.score - a.agg.score);
 }
 

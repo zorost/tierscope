@@ -6,7 +6,7 @@ import { Board } from "../components/Board";
 import { api } from "../lib/api";
 import { copyText } from "../lib/copyText";
 import { exportNodePng } from "../lib/exportPng";
-import type { BoardMap } from "../lib/types";
+import type { BoardMap, ModelCard } from "../lib/types";
 import {
   decodeBoard,
   encodeBoard,
@@ -53,7 +53,9 @@ export default function Home() {
       return;
     }
     const next: BoardMap = {};
-    for (const m of models.data) next[m.slug] = scoreToTier(m.agg.score);
+    for (const m of models.data) {
+      if (hasBenches(m)) next[m.slug] = scoreToTier(m.agg.score);
+    }
     setBoard(next);
     setSeeded(true);
   }, [models.data, seeded, params]);
@@ -75,10 +77,18 @@ export default function Home() {
       return;
     }
     const next: BoardMap = {};
-    for (const m of models.data) next[m.slug] = scoreToTier(m.agg.score);
+    let ranked = 0;
+    for (const m of models.data) {
+      if (!hasBenches(m)) continue;
+      next[m.slug] = scoreToTier(m.agg.score);
+      ranked += 1;
+    }
     setSeeded(true);
     setBoard(next);
-    setNote({ kind: "ok", text: `Auto-ranked ${models.data.length} models from the live consensus.` });
+    setNote({
+      kind: "ok",
+      text: `Auto-ranked ${ranked} models with public benches. The rest stay Unranked.`,
+    });
   }
 
   async function share() {
@@ -136,7 +146,7 @@ export default function Home() {
         <input
           className="field search"
           type="search"
-          placeholder="Filter models"
+          placeholder="Search Haiku, Phi, Nova, Grok…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           aria-label="Search models"
@@ -175,4 +185,8 @@ export default function Home() {
       )}
     </>
   );
+}
+
+function hasBenches(model: ModelCard): boolean {
+  return [model.arenaElo, model.aaIndex, model.arcAgi2, model.sweBench, model.gpqa].some((n) => n != null);
 }
