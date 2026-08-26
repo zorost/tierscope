@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
+import { TIER_COLORS } from "@contracts/tiers";
+import { NameWithMark } from "../components/ModelMark";
 import { api } from "../lib/api";
 
 export default function Stats() {
@@ -76,12 +77,14 @@ export default function Stats() {
               {(consensus.data ?? []).map((row) => (
                 <tr key={row.slug}>
                   <td>
-                    <Link to={`/models/${row.slug}`} className="clip">
-                      {row.name}
-                    </Link>
+                    <NameWithMark lab={row.lab} name={row.name} to={`/models/${row.slug}`} />
                   </td>
                   <td className="clip">{row.lab}</td>
-                  <td>{row.tier}</td>
+                  <td>
+                    <span className="tier-pill" style={{ background: TIER_COLORS[row.tier] }}>
+                      {row.tier}
+                    </span>
+                  </td>
                   <td className="num">{row.score.toFixed(1)}</td>
                   <td className="num">{row.nReal}</td>
                   <td className="num">{row.nCal}</td>
@@ -112,7 +115,7 @@ export default function Stats() {
               {divisive.map((row) => (
                 <tr key={row.slug}>
                   <td>
-                    <Link to={`/models/${row.slug}`}>{row.name}</Link>
+                    <NameWithMark lab={row.lab} name={row.name} to={`/models/${row.slug}`} />
                   </td>
                   <td className="num">{row.controversy.toFixed(1)}</td>
                   <td className="num">{row.n}</td>
@@ -138,7 +141,7 @@ export default function Stats() {
               {(trending.data ?? []).map((row) => (
                 <tr key={row.slug}>
                   <td>
-                    <Link to={`/models/${row.slug}`}>{row.name}</Link>
+                    <NameWithMark lab={row.lab} name={row.name} to={`/models/${row.slug}`} />
                   </td>
                   <td>{row.lab}</td>
                   <td className="num">{row.count}</td>
@@ -169,7 +172,7 @@ export default function Stats() {
               {(alignment.data?.scatter ?? []).map((row) => (
                 <tr key={row.slug}>
                   <td>
-                    <Link to={`/models/${row.slug}`}>{row.name}</Link>
+                    <NameWithMark lab={row.lab} name={row.name} to={`/models/${row.slug}`} />
                   </td>
                   <td className="num">{row.consensus.toFixed(1)}</td>
                   <td className="num">{row.aa == null ? " - " : row.aa.toFixed(1)}</td>

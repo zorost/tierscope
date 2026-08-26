@@ -1,4 +1,7 @@
 import type { ConsensusRow, ModelCard } from "./types";
+import { localApi } from "./localApi";
+
+export const isStaticPreview = import.meta.env.VITE_STATIC === "1";
 
 async function read<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
@@ -12,7 +15,7 @@ async function read<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export const api = {
+const remoteApi = {
   status: () =>
     read<{ lastSyncAt: string | null; modelCount: number; registryAsOf: string }>("/api/status"),
   models: (q: { kind?: string; search?: string; anonId?: string } = {}) => {
@@ -47,8 +50,8 @@ export const api = {
       frontierCount: number;
       openCount: number;
       totalVotes: number;
-      calibrationVotes: number;
       voterCount: number;
+      calibrationVotes: number;
       votes24h: number;
       votes7d: number;
       lastSyncAt: string | null;
@@ -84,3 +87,5 @@ export const api = {
       headToHead: { preferA: number; preferB: number; tied: number; total: number };
     }>(`/api/stats/compare?a=${encodeURIComponent(a)}&b=${encodeURIComponent(b)}`),
 };
+
+export const api = isStaticPreview ? localApi : remoteApi;

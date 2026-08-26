@@ -2,7 +2,9 @@
 
 Community tier list for frontier and open-weight AI models. Drag models into S+ through F, submit a board as votes, and read a Bayesian consensus anchored to public benchmarks.
 
-This repository is private until the owner publishes it. It contains no personal accounts, emails, or credentials.
+Live board: https://zorost.github.io/tierscope/
+
+The GitHub Pages build is a static preview. Votes stay in this browser. The local app can also run a SQLite API for a shared ledger.
 
 ## Run locally
 
@@ -51,3 +53,4 @@ Edit `contracts/registry.ts`. Use `null` for unknown metrics. Never invent score
 - `npm run check` typecheck
 - `npm test` scoring self-check
 - `npm run seed` registry sync plus calibration if the ledger is empty
+- `npm run build:pages` static GitHub Pages bundle

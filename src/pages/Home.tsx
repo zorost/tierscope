@@ -21,6 +21,7 @@ export default function Home() {
   const [kind, setKind] = useState<"all" | "frontier" | "open">("all");
   const [search, setSearch] = useState("");
   const [board, setBoard] = useState<BoardMap>(() => loadDraft());
+  const [seeded, setSeeded] = useState(false);
   const [note, setNote] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   const models = useQuery({
@@ -38,6 +39,22 @@ export default function Home() {
   useEffect(() => {
     saveDraft(board);
   }, [board]);
+
+  useEffect(() => {
+    if (seeded || !models.data) return;
+    if (params.get("board")) {
+      setSeeded(true);
+      return;
+    }
+    if (Object.keys(loadDraft()).length > 0) {
+      setSeeded(true);
+      return;
+    }
+    const next: BoardMap = {};
+    for (const m of models.data) next[m.slug] = scoreToTier(m.agg.score);
+    setBoard(next);
+    setSeeded(true);
+  }, [models.data, seeded, params]);
 
   const submit = useMutation({
     mutationFn: () => api.submit(anonId, placementsOf(board)),
@@ -72,7 +89,7 @@ export default function Home() {
     const node = document.getElementById("tier-sheet");
     if (!node) return;
     const { default: html2canvas } = await import("html2canvas");
-    const canvas = await html2canvas(node, { backgroundColor: "#10110e", scale: 2 });
+    const canvas = await html2canvas(node, { backgroundColor: "#09090a", scale: 2 });
     const a = document.createElement("a");
     a.href = canvas.toDataURL("image/png");
     a.download = "tierscope-board.png";
@@ -88,37 +105,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="toolbar" style={{ marginBottom: 16 }}>
-        <button type="button" className="btn btn-gold" onClick={() => submit.mutate()} disabled={submit.isPending}>
-          Submit {placed}
-        </button>
-        <button type="button" className="btn" onClick={autoRank}>
-          Auto-rank
-        </button>
-        <button type="button" className="btn btn-ghost" onClick={share}>
-          Share
-        </button>
-        <button type="button" className="btn btn-ghost" onClick={() => void exportPng()}>
-          PNG
-        </button>
-        <button
-          type="button"
-          className="btn btn-ghost"
-          onClick={() => {
-            setBoard({});
-            setNote(null);
-          }}
-        >
-          Clear
-        </button>
-        <input
-          className="field"
-          type="search"
-          placeholder="Search name or lab"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          aria-label="Search models"
-        />
+      <div className="toolbar">
         <div className="seg" role="group" aria-label="Model kind">
           {(["all", "frontier", "open"] as const).map((k) => (
             <button
@@ -131,8 +118,39 @@ export default function Home() {
             </button>
           ))}
         </div>
-        {note && <p className={`note ${note.kind}`}>{note.text}</p>}
+        <input
+          className="field search"
+          type="search"
+          placeholder="Filter models"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          aria-label="Search models"
+        />
+        <div className="spacer" />
+        <button
+          type="button"
+          className="btn"
+          onClick={() => {
+            setBoard({});
+            setNote(null);
+          }}
+        >
+          Reset
+        </button>
+        <button type="button" className="btn" onClick={autoRank}>
+          Auto-rank
+        </button>
+        <button type="button" className="btn" onClick={share}>
+          Share
+        </button>
+        <button type="button" className="btn" onClick={() => void exportPng()}>
+          Export PNG
+        </button>
+        <button type="button" className="btn btn-gold" onClick={() => submit.mutate()} disabled={submit.isPending}>
+          Submit {placed}
+        </button>
       </div>
+      {note && <p className={`note ${note.kind}`} style={{ marginBottom: 12 }}>{note.text}</p>}
 
       {models.isPending && <p className="note">Loading catalog…</p>}
       {models.isError && <p className="note err">{(models.error as Error).message}</p>}

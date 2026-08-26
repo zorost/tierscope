@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
+import { TIER_COLORS } from "@contracts/tiers";
+import { NameWithMark } from "../components/ModelMark";
 import { api } from "../lib/api";
 import type { ModelCard } from "../lib/types";
 
@@ -90,14 +91,16 @@ export default function Models() {
             {rows.map((m: ModelCard) => (
               <tr key={m.slug}>
                 <td>
-                  <Link to={`/models/${m.slug}`} className="clip">
-                    {m.name}
-                  </Link>
+                  <NameWithMark lab={m.lab} name={m.name} to={`/models/${m.slug}`} />
                 </td>
                 <td className="clip">{m.lab}</td>
                 <td>{m.kind === "open" ? "Open" : "Frontier"}</td>
                 <td className="num">{m.agg.score.toFixed(1)}</td>
-                <td>{m.agg.tier}</td>
+                <td>
+                  <span className="tier-pill" style={{ background: TIER_COLORS[m.agg.tier] }}>
+                    {m.agg.tier}
+                  </span>
+                </td>
                 <td className="num">{cell(m.arenaElo)}</td>
                 <td className="num">{cell(m.aaIndex)}</td>
                 <td className="num">{cell(m.sweBench, 1)}</td>

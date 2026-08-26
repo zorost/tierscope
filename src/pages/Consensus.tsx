@@ -27,7 +27,9 @@ export default function Consensus() {
       </div>
       {(consensus.isPending || models.isPending) && <p className="note">Loading consensus…</p>}
       {consensus.isError && <p className="note err">{(consensus.error as Error).message}</p>}
-      {models.data && <Board models={models.data} board={board} onChange={() => undefined} readOnly />}
+      {models.data && (
+        <Board models={models.data} board={board} onChange={() => undefined} readOnly title="Consensus board" />
+      )}
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { Link } from "react-router";
 import {
   DndContext,
@@ -13,10 +13,20 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { TIER_POINTS, TIERS, type Tier } from "@contracts/tiers";
+import { POOL_COLOR, TIER_COLORS, TIER_POINTS, TIERS, type Tier } from "@contracts/tiers";
 import type { BoardMap, ModelCard } from "../lib/types";
+import { ModelMark } from "./ModelMark";
 
 const POOL = "pool";
+
+function ChipFace({ model }: { model: ModelCard }) {
+  return (
+    <>
+      <ModelMark lab={model.lab} />
+      <span className="chip-name">{model.name}</span>
+    </>
+  );
+}
 
 function Chip({
   model,
@@ -41,8 +51,7 @@ function Chip({
       {...listeners}
       {...attributes}
     >
-      <span className="chip-name">{model.name}</span>
-      <span className="chip-lab">{model.lab}</span>
+      <ChipFace model={model} />
     </button>
   );
 }
@@ -50,8 +59,7 @@ function Chip({
 function ReadChip({ model }: { model: ModelCard }) {
   return (
     <Link to={`/models/${model.slug}`} className="chip" title={`${model.name} · ${model.lab}`}>
-      <span className="chip-name">{model.name}</span>
-      <span className="chip-lab">{model.lab}</span>
+      <ChipFace model={model} />
     </Link>
   );
 }
@@ -70,11 +78,13 @@ export function Board({
   board,
   onChange,
   readOnly = false,
+  title = "AI model tier list",
 }: {
   models: ModelCard[];
   board: BoardMap;
   onChange: (next: BoardMap) => void;
   readOnly?: boolean;
+  title?: string;
 }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -140,37 +150,55 @@ export function Board({
   }
 
   const spine = (
-    <div className="sheet" id="tier-sheet">
-      {TIERS.map((tier) => (
-        <div key={tier} className="tier-row" onClick={() => onRowClick(tier)}>
-          <div className={`tier-title${tier === "S+" || tier === "S" ? " is-gold" : ""}`}>
-            <strong>{tier}</strong>
-            <span>{TIER_POINTS[tier]}</span>
+    <section className="board-frame" id="tier-sheet">
+      <header className="board-head">
+        <h1>{title}</h1>
+        <span className="count">{models.length} models</span>
+      </header>
+      <div className="board">
+        {TIERS.map((tier) => (
+          <div
+            key={tier}
+            className="tier-row"
+            style={{ "--tier": TIER_COLORS[tier] } as CSSProperties}
+            onClick={() => onRowClick(tier)}
+          >
+            <div className="tier-title">
+              <strong>{tier}</strong>
+              <span>{TIER_POINTS[tier]}</span>
+            </div>
+            <DropLane id={tier}>{chips(grouped[tier])}</DropLane>
           </div>
-          <DropLane id={tier}>{chips(grouped[tier])}</DropLane>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </section>
   );
 
   const pool = (
-    <div className="pool">
-      <div className="pool-head">
-        <h2>Unplaced · {grouped.pool.length}</h2>
+    <section className="board-frame pool-frame">
+      <header className="board-head">
+        <h2>Unranked</h2>
+        <span className="count">{grouped.pool.length} left</span>
         <p className="note">
-          {readOnly ? "No leftover models" : selected ? "Click a title row" : "Drag or click, then a title row"}
+          {readOnly
+            ? "Models the consensus has not placed sit here."
+            : selected
+              ? "Click a colored row to place the selected model."
+              : "Drag a chip, or click it and then a colored row."}
         </p>
-      </div>
-      <div className="sheet">
-        <div className="tier-row" onClick={() => onRowClick(POOL)}>
-          <div className="tier-title">
-            <strong> - </strong>
-            <span>list</span>
-          </div>
-          <DropLane id={POOL}>{chips(grouped.pool)}</DropLane>
+      </header>
+      <div
+        className="tier-row is-pool"
+        style={{ "--tier": POOL_COLOR } as CSSProperties}
+        onClick={() => onRowClick(POOL)}
+      >
+        <div className="tier-title">
+          <strong>List</strong>
+          <span>pool</span>
         </div>
+        <DropLane id={POOL}>{chips(grouped.pool)}</DropLane>
       </div>
-    </div>
+    </section>
   );
 
   if (readOnly) {
@@ -194,8 +222,7 @@ export function Board({
       <DragOverlay>
         {active ? (
           <div className="chip is-selected">
-            <span className="chip-name">{active.name}</span>
-            <span className="chip-lab">{active.lab}</span>
+            <ChipFace model={active} />
           </div>
         ) : null}
       </DragOverlay>

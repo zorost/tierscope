@@ -4,35 +4,44 @@
 
 ## World
 
-Dark FIDE ranking sheet. Models are pairing slips that move between title rows. Four inks only. No hero, no icon-card grid, no rainbow tiers.
+Luxury dark Tiermaker. Saturated color blocks name each rank. Models are chips with a lab mark on a white tile. The page glows from the top, not a ruled sheet.
 
 ## Palette
 
 | Token | Hex | Role |
 | --- | --- | --- |
-| ground | `#10110e` | Page |
-| panel | `#161712` | Sheet fill |
-| rule | `#2e3028` | Hairlines |
-| ink | `#f4f2eb` | Primary text |
-| ink-dim | `#c8c4b6` | Secondary text (≥4.5:1 on ground) |
-| gold | `#c9a227` | S+/S titles and the one primary action |
-| gold-ink | `#1a1608` | Text on gold |
+| ground | `#080808` | Page, with a `#202126` radial wash |
+| panel | `#0e0e0f` | Tables and frames |
+| rule | `#292a2d` | Hairlines |
+| ink | `#f5f5f7` | Primary text |
+| ink-dim | `#8d8e94` | Secondary text |
+| primary | `#f5f5f7` | Submit and export |
+| S+ | `#ff244d` | Top rank |
+| S | `#ff6a1a` | |
+| A | `#ff9500` | |
+| B | `#ffca28` | |
+| C | `#13d6a2` | |
+| D | `#bd5df3` | |
+| F | `#f72fa6` | |
+| Unranked | `#60646c` | Pool |
+
+Label ink on color blocks is `#070708`. Unranked uses paper ink.
 
 ## Type
 
-Public Sans, 15px body, 13px UI, 24px page titles, 18px wordmark. Tabular numerals. Tracking no tighter than -0.03em on titles.
+Public Sans. 15px body, 13px UI, 28px board title, 28px / 900 tier letters. Tracking to `-0.04em` on titles only.
 
 ## Layout
 
-8px grid. Page width 1200px. Title column 72px. Ruled rows, not cards. Chips max 240px with ellipsis. Tables `table-layout: fixed`.
+Page width 1260px. Each rank is its own rounded row, 10px gap between rows. Title column 116px. Chips 52px tall, logo 36px, name ellipsis. Tables `table-layout: fixed`.
 
 ## Components
 
-- Nav current page: inverted ink on ground.
-- Chip selected: same inversion.
-- Buttons: 36px, 1px rule, `scale(0.97)` on press, 160ms ease-out.
-- Empty tiers stay empty. Helper copy lives once, in the unplaced head.
+- Nav: segmented dark pill, current page is `#2a2b2f`.
+- Chip: dark gradient, 8px radius, 3px lift on hover. Selected is a white ring, not inversion.
+- Logo: white rounded tile, mark contained, never overlapping the name.
+- Empty lanes keep the drop hint. Helper copy lives in the Unranked head.
 
 ## Motion
 
-Press feedback only. No page-load choreography. `prefers-reduced-motion` disables transform.
+Chip lift and press scale only. `prefers-reduced-motion` disables transform.

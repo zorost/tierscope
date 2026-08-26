@@ -1,13 +1,32 @@
+# Dependencies and builds
 node_modules
 dist
-data/*.db
-data/*.db-*
+*.tsbuildinfo
+
+# Local databases and secrets
+data/*
+!data/.gitkeep
+*.db
+*.db-*
+*.sqlite
 .env
 .env.*
 !.env.example
-.DS_Store
-*.log
-.impeccable
+*.pem
+*.key
+credentials.json
+
+# Internal source that must never ship
 from Kimi K3
-tsconfig.app.tsbuildinfo
-tsconfig.server.tsbuildinfo
+.impeccable
+PRODUCT.md
+
+# Editor and OS junk
+.DS_Store
+.vscode
+.idea
+*.log
+*.local
+.cache
+coverage
+.turbo

@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { TIERS, type Tier } from "@contracts/tiers";
+import { TIER_COLORS, TIERS, tierColor, type Tier } from "@contracts/tiers";
+import { ModelMark } from "../components/ModelMark";
 import { api } from "../lib/api";
 import { getAnonId, loadDraft, saveDraft } from "../lib/voter";
 
@@ -43,11 +44,14 @@ export default function ModelDetail() {
   return (
     <>
       <div className="page-lead">
-        <div>
-          <h1 className="clip">{m.name}</h1>
-          <p>
-            {m.lab} · {m.kind === "open" ? "Open-weight" : "Frontier"} · consensus {m.agg.score.toFixed(1)} ({m.agg.tier})
-          </p>
+        <div className="detail-head">
+          <ModelMark lab={m.lab} size={48} />
+          <div>
+            <h1 className="clip">{m.name}</h1>
+            <p>
+              {m.lab} · {m.kind === "open" ? "Open-weight" : "Frontier"} · consensus {m.agg.score.toFixed(1)} ({m.agg.tier})
+            </p>
+          </div>
         </div>
         <Link to="/models" className="btn btn-ghost">
           All models
@@ -93,9 +97,14 @@ export default function ModelDetail() {
           <div className="dist">
             {m.dist.map((row) => (
               <div key={row.tier} className="dist-row">
-                <span>{row.tier}</span>
+                <span className="tier-pill" style={{ background: tierColor(row.tier) }}>
+                  {row.tier}
+                </span>
                 <div className="dist-track" aria-hidden="true">
-                  <div className="dist-fill" style={{ width: `${(row.count / max) * 100}%` }} />
+                  <div
+                    className="dist-fill"
+                    style={{ width: `${(row.count / max) * 100}%`, background: tierColor(row.tier) }}
+                  />
                 </div>
                 <span className="num">{row.count}</span>
               </div>
@@ -110,7 +119,8 @@ export default function ModelDetail() {
               <button
                 key={t}
                 type="button"
-                className={m.myTier === t ? "btn btn-gold" : "btn"}
+                className={m.myTier === t ? "btn is-selected" : "btn"}
+                style={{ background: TIER_COLORS[t], color: "#070708", borderColor: TIER_COLORS[t] }}
                 onClick={() => vote.mutate(t)}
               >
                 {t}

@@ -35,16 +35,22 @@ export function scoreToTier(score: number): Tier {
   return "F";
 }
 
-/** Tier accent colors (hex)  -  keep in sync with tailwind classes in tiers-tw.ts */
+/** Saturated row colors, one hue per category so the board reads at a glance. */
 export const TIER_COLORS: Record<Tier, string> = {
-  "S+": "#fbbf24", // amber-400
-  S: "#f59e0b", // amber-500
-  A: "#8b5cf6", // violet-500
-  B: "#3b82f6", // blue-500
-  C: "#10b981", // emerald-500
-  D: "#f97316", // orange-500
-  F: "#f43f5e", // rose-500
+  "S+": "#ff244d",
+  S: "#ff6a1a",
+  A: "#ff9500",
+  B: "#ffca28",
+  C: "#13d6a2",
+  D: "#bd5df3",
+  F: "#f72fa6",
 };
+
+export const POOL_COLOR = "#60646c";
+
+export function tierColor(tier: string): string {
+  return (TIER_COLORS as Record<string, string>)[tier] ?? POOL_COLOR;
+}
 
 /**
  * Bayesian prior strength (in "phantom votes") anchoring the consensus to

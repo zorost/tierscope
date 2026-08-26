@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { NavLink } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "../lib/api";
+import { api, isStaticPreview } from "../lib/api";
 
 const LINKS = [
   { to: "/", label: "Board" },
@@ -35,7 +35,11 @@ export function Shell({ children }: { children: ReactNode }) {
       </header>
       <main className="page">{children}</main>
       <footer className="foot">
-        <span>Community ranking. Calibration votes are labeled.</span>
+        <span>
+          {isStaticPreview
+            ? "Static preview. Votes stay in this browser."
+            : "Community ranking. Calibration votes are labeled."}
+        </span>
         <NavLink to="/methodology">How scores are computed</NavLink>
       </footer>
     </div>
