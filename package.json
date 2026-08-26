@@ -1,0 +1,44 @@
+{
+  "name": "tierscope",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Community tier list for frontier and open-weight AI models, with a Bayesian consensus anchored to public benchmarks.",
+  "scripts": {
+    "dev": "concurrently -k -n web,api -c cyan,magenta \"vite\" \"tsx watch server/index.ts\"",
+    "build": "tsc -b && vite build && esbuild server/index.ts --bundle --platform=node --format=esm --outfile=dist/server.js --packages=external",
+    "start": "NODE_ENV=production node dist/server.js",
+    "check": "tsc -b --pretty false",
+    "test": "tsx server/self-check.ts",
+    "seed": "tsx server/seed.ts",
+    "seed:purge": "tsx server/seed.ts --purge-calibration"
+  },
+  "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@fontsource/public-sans": "^5.2.5",
+    "@hono/node-server": "^1.19.1",
+    "@tanstack/react-query": "^5.90.16",
+    "better-sqlite3": "^12.4.1",
+    "drizzle-orm": "^0.44.5",
+    "hono": "^4.9.8",
+    "html2canvas": "^1.4.1",
+    "lucide-react": "^0.544.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router": "^7.9.1",
+    "zod": "^4.1.8"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.0.3",
+    "concurrently": "^9.2.1",
+    "esbuild": "^0.25.9",
+    "tsx": "^4.20.5",
+    "typescript": "~5.9.2",
+    "vite": "^7.1.5"
+  }
+}

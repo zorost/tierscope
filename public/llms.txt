@@ -1,0 +1,9 @@
+# TierScope
+
+TierScope is a community tier list for frontier and open-weight AI models.
+
+Users place models into tiers S+ through F. The site computes a Bayesian consensus anchored to public benchmarks (Artificial Analysis, LMArena, ARC-AGI-2, SWE-bench). Calibration votes are synthetic and labeled.
+
+Routes: / board, /consensus, /models, /models/:slug, /stats, /methodology.
+
+Registry snapshot date is published in the header. Unknown metrics are null. Scores are not invented.
