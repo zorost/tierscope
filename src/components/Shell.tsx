@@ -22,7 +22,7 @@ export function Shell({ children }: { children: ReactNode }) {
         <NavLink to="/" className="brand">
           <span className="brand-name">TierScope</span>
           <span className="brand-meta">
-            {count ? `${count} models` : "Catalog"} · registry {asOf}
+            {count ? `${count} models` : "Catalog"} · updated {asOf}
           </span>
         </NavLink>
         <nav className="nav" aria-label="Primary">

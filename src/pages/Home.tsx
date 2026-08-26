@@ -4,6 +4,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { scoreToTier } from "@contracts/tiers";
 import { Board } from "../components/Board";
 import { api } from "../lib/api";
+import { copyText } from "../lib/copyText";
+import { exportNodePng } from "../lib/exportPng";
 import type { BoardMap } from "../lib/types";
 import {
   decodeBoard,
@@ -68,32 +70,45 @@ export default function Home() {
   });
 
   function autoRank() {
-    if (!models.data) return;
-    const next: BoardMap = {};
-    for (const m of models.data) {
-      next[m.slug] = scoreToTier(m.agg.score);
+    if (!models.data) {
+      setNote({ kind: "err", text: "Catalog is still loading." });
+      return;
     }
+    const next: BoardMap = {};
+    for (const m of models.data) next[m.slug] = scoreToTier(m.agg.score);
+    setSeeded(true);
     setBoard(next);
-    setNote({ kind: "ok", text: "Filled from live consensus. Submit to record your vote." });
+    setNote({ kind: "ok", text: `Auto-ranked ${models.data.length} models from the live consensus.` });
   }
 
-  function share() {
+  async function share() {
+    const token = encodeBoard(board);
     const url = new URL(window.location.href);
-    url.searchParams.set("board", encodeBoard(board));
-    void navigator.clipboard.writeText(url.toString());
-    setParams({ board: encodeBoard(board) });
-    setNote({ kind: "ok", text: "Share link copied." });
+    url.searchParams.set("board", token);
+    const href = url.toString();
+    setSeeded(true);
+    setParams({ board: token }, { replace: true });
+    const copied = await copyText(href);
+    if (copied) {
+      setNote({ kind: "ok", text: "Share link copied." });
+      return;
+    }
+    setNote({ kind: "ok", text: href });
   }
 
   async function exportPng() {
     const node = document.getElementById("tier-sheet");
-    if (!node) return;
-    const { default: html2canvas } = await import("html2canvas");
-    const canvas = await html2canvas(node, { backgroundColor: "#09090a", scale: 2 });
-    const a = document.createElement("a");
-    a.href = canvas.toDataURL("image/png");
-    a.download = "tierscope-board.png";
-    a.click();
+    if (!node) {
+      setNote({ kind: "err", text: "The board is not ready to export." });
+      return;
+    }
+    setNote({ kind: "ok", text: "Exporting PNG…" });
+    try {
+      await exportNodePng(node, "tierscope-board.png");
+      setNote({ kind: "ok", text: "Board PNG downloaded." });
+    } catch (err) {
+      setNote({ kind: "err", text: err instanceof Error ? err.message : "Export failed." });
+    }
   }
 
   function assign(next: BoardMap) {
@@ -131,8 +146,9 @@ export default function Home() {
           type="button"
           className="btn"
           onClick={() => {
+            setSeeded(true);
             setBoard({});
-            setNote(null);
+            setNote({ kind: "ok", text: "Board cleared. Drag chips or use Auto-rank." });
           }}
         >
           Reset
@@ -140,7 +156,7 @@ export default function Home() {
         <button type="button" className="btn" onClick={autoRank}>
           Auto-rank
         </button>
-        <button type="button" className="btn" onClick={share}>
+        <button type="button" className="btn" onClick={() => void share()}>
           Share
         </button>
         <button type="button" className="btn" onClick={() => void exportPng()}>

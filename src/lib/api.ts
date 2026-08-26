@@ -88,4 +88,31 @@ const remoteApi = {
     }>(`/api/stats/compare?a=${encodeURIComponent(a)}&b=${encodeURIComponent(b)}`),
 };
 
-export const api = isStaticPreview ? localApi : remoteApi;
+function fallback<A extends unknown[], R>(
+  remote: (...args: A) => Promise<R>,
+  local: (...args: A) => Promise<R>,
+): (...args: A) => Promise<R> {
+  return async (...args: A) => {
+    if (isStaticPreview) return local(...args);
+    try {
+      return await remote(...args);
+    } catch {
+      return local(...args);
+    }
+  };
+}
+
+export const api = {
+  status: fallback(remoteApi.status, localApi.status),
+  models: fallback(remoteApi.models, localApi.models),
+  model: fallback(remoteApi.model, localApi.model),
+  mine: fallback(remoteApi.mine, localApi.mine),
+  submit: fallback(remoteApi.submit, localApi.submit),
+  clear: fallback(remoteApi.clear, localApi.clear),
+  overview: fallback(remoteApi.overview, localApi.overview),
+  consensus: fallback(remoteApi.consensus, localApi.consensus),
+  alignment: fallback(remoteApi.alignment, localApi.alignment),
+  activity: fallback(remoteApi.activity, localApi.activity),
+  trending: fallback(remoteApi.trending, localApi.trending),
+  compare: fallback(remoteApi.compare, localApi.compare),
+};

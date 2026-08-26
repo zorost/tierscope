@@ -40,7 +40,7 @@ export interface RegistryEntry {
   };
 }
 
-export const REGISTRY_AS_OF = "2026-08-21";
+export const REGISTRY_AS_OF = "2026-08-26";
 
 export const MODEL_REGISTRY: RegistryEntry[] = [
   // ─────────────────────────── Frontier (proprietary) ───────────────────────────
@@ -232,6 +232,23 @@ export const MODEL_REGISTRY: RegistryEntry[] = [
     metrics: { arena: 1505, aa: null, arc2: null, swe: null, gpqa: null },
   },
   {
+    slug: "gemini-3.6-flash",
+    name: "Gemini 3.6 Flash",
+    lab: "Google",
+    kind: "frontier",
+    license: null,
+    paramsB: null,
+    activeB: null,
+    ctxK: 1000,
+    inPrice: 1.5,
+    outPrice: 7.5,
+    released: "2026-07-21",
+    summary:
+      "July Flash step before 3.7. Public pricing sat at $1.50 / $7.50 per 1M tokens.",
+    tags: ["fast", "value", "multimodal"],
+    metrics: { arena: null, aa: null, arc2: null, swe: null, gpqa: null },
+  },
+  {
     slug: "grok-4.6",
     name: "Grok 4.6",
     lab: "xAI",
@@ -256,13 +273,47 @@ export const MODEL_REGISTRY: RegistryEntry[] = [
     license: null,
     paramsB: null,
     activeB: null,
+    ctxK: 1000,
+    inPrice: 1.25,
+    outPrice: 4.25,
+    released: "2026-08-05",
+    summary:
+      "Meta's paid agentic model with a 1M context window, shipped with Muse Code.",
+    tags: ["agents", "closed", "long-context"],
+    metrics: { arena: null, aa: null, arc2: null, swe: null, gpqa: null },
+  },
+  {
+    slug: "muse-glimmer",
+    name: "Muse Glimmer",
+    lab: "Meta",
+    kind: "open",
+    license: "Apache-2.0",
+    paramsB: 29.6,
+    activeB: 29.6,
     ctxK: null,
     inPrice: null,
     outPrice: null,
-    released: "2026-04-30",
+    released: "2026-08-10",
     summary:
-      "Meta's first closed frontier model  -  no weights, no architecture paper  -  as Meta stepped back from the open frontier.",
-    tags: ["general", "closed"],
+      "29.6B dense multimodal model under Apache 2.0, sized to run on one consumer GPU.",
+    tags: ["open-weight", "multimodal", "small"],
+    metrics: { arena: null, aa: null, arc2: null, swe: null, gpqa: null },
+  },
+  {
+    slug: "ox-alpha",
+    name: "OX Alpha",
+    lab: "Unknown",
+    kind: "frontier",
+    license: null,
+    paramsB: null,
+    activeB: null,
+    ctxK: null,
+    inPrice: null,
+    outPrice: null,
+    released: "2026-08-08",
+    summary:
+      "Anonymous coding model that showed up on public benches in August 2026. Lab still unconfirmed.",
+    tags: ["coding", "anonymous"],
     metrics: { arena: null, aa: null, arc2: null, swe: null, gpqa: null },
   },
   {

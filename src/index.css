@@ -103,11 +103,17 @@ svg {
   gap: 12px;
   width: min(1260px, calc(100% - 28px));
   margin: 0 auto;
-  padding: 22px 0 0;
+  padding: 22px 0 12px;
   position: sticky;
   top: 0;
   z-index: 20;
+  pointer-events: none;
   background: linear-gradient(180deg, #080808 70%, #08080800);
+}
+
+.masthead .brand,
+.masthead .nav {
+  pointer-events: auto;
 }
 
 .brand {
@@ -201,6 +207,8 @@ svg {
 }
 
 .toolbar {
+  position: relative;
+  z-index: 21;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -390,7 +398,6 @@ svg {
   color: #070708;
   min-width: 0;
   padding: 10px 8px;
-  text-shadow: 0 1px #ffffff44;
 }
 
 .tier-title strong {
@@ -398,27 +405,36 @@ svg {
   font-weight: 900;
   letter-spacing: -0.03em;
   line-height: 1.05;
+  text-shadow: 0 1px #ffffff44;
 }
 
 .tier-title span {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 800;
   letter-spacing: 0.04em;
-  text-transform: uppercase;
   font-variant-numeric: tabular-nums;
-  color: #070708bb;
+  color: #fff;
+  text-shadow:
+    -1px -1px 0 #070708,
+    1px -1px 0 #070708,
+    -1px 1px 0 #070708,
+    1px 1px 0 #070708,
+    0 1px 0 #070708,
+    0 -1px 0 #070708,
+    1px 0 0 #070708,
+    -1px 0 0 #070708;
 }
 
 .tier-row.is-pool .tier-title {
   color: #f5f5f7;
+}
+
+.tier-row.is-pool .tier-title strong {
   text-shadow: none;
 }
 
-.tier-row.is-pool .tier-title span {
-  color: #d0d2d8;
-}
-
 .tier-lane {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   align-content: center;
@@ -426,7 +442,21 @@ svg {
   gap: 10px;
   padding: 16px;
   min-width: 0;
-  background: color-mix(in srgb, var(--tier) 9%, #0a0a0b);
+  background: #0a0a0b;
+}
+
+.tier-lane::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--tier);
+  opacity: 0.09;
+  pointer-events: none;
+}
+
+.tier-lane > * {
+  position: relative;
+  z-index: 1;
 }
 
 .tier-lane:empty::after {
@@ -435,11 +465,16 @@ svg {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  position: relative;
+  z-index: 1;
+}
+
+.tier-lane.is-over-lane::before {
+  opacity: 0.22;
 }
 
 .tier-lane.is-over-lane {
-  background: color-mix(in srgb, var(--tier) 22%, #0a0a0b);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tier) 55%, transparent);
+  box-shadow: inset 0 0 0 1px #ffffff55;
 }
 
 .chip {
